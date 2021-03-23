@@ -18,13 +18,13 @@ namespace NoIntroRewrite
         
         class SkipPatches
         {
-            private static bool startedUp = false;
+            private static int runTimes = 0;
             
             [HarmonyPatch(typeof(StartupScene), nameof(StartupScene.Update))]
             [HarmonyPostfix]
             private static void Update_Postfix()
             {
-                if (!startedUp)
+                if (runTimes <= 60)
                 {
                     Scene activeScene = SceneManager.GetActiveScene();
                     if (activeScene.name == "XDStartupScene")
@@ -33,10 +33,11 @@ namespace NoIntroRewrite
                         GameObject val2 = GameObject.Find("XDTitleLogo(Clone)");
                         if (val && val2)
                         {
-                            startedUp = true;
+                            
                             StartupScene component = val.GetComponent<StartupScene>();
                             val2.SetActive(false);
                             component.animationTimer = 8f;
+                            runTimes++;
                         }
                     }
                 }
